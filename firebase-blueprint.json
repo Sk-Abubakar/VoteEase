@@ -1,0 +1,83 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Represents a voter in the VoteEase system.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "isVerified": { "type": "boolean" },
+        "registrationStatus": { "type": "string", "enum": ["pending", "verified"] },
+        "votedElections": { "type": "array", "items": { "type": "string" } },
+        "bio": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "role": { "type": "string", "enum": ["voter", "candidate", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "isVerified"]
+    },
+    "Election": {
+      "title": "Election",
+      "description": "An active or upcoming election event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "startDate": { "type": "string", "format": "date-time" },
+        "endDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["upcoming", "active", "ended"] },
+        "category": { "type": "string" }
+      },
+      "required": ["title", "status", "startDate", "endDate"]
+    },
+    "Candidate": {
+      "title": "Candidate",
+      "description": "A candidate running in a specific election.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "electionId": { "type": "string" },
+        "name": { "type": "string" },
+        "party": { "type": "string" },
+        "bio": { "type": "string" },
+        "platform": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "vision": { "type": "string" }
+      },
+      "required": ["electionId", "name", "party"]
+    },
+    "Vote": {
+      "title": "Vote Record",
+      "description": "A recorded vote (anonymized in a real system, but linked for prototype).",
+      "type": "object",
+      "properties": {
+        "electionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "candidateId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["electionId", "userId", "candidateId", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and verification status."
+    },
+    "/elections/{electionId}": {
+      "schema": "Election",
+      "description": "Available elections."
+    },
+    "/elections/{electionId}/candidates/{candidateId}": {
+      "schema": "Candidate",
+      "description": "Candidates for a specific election."
+    },
+    "/votes/{voteId}": {
+      "schema": "Vote",
+      "description": "Anonymized (or not) record of votes."
+    }
+  }
+}

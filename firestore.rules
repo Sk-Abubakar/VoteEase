@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Validation Blueprints ---
+
+    function isValidUser(data) {
+      return data.uid == request.auth.uid 
+        && data.email is string && data.email.size() < 256
+        && data.isVerified is bool
+        && (data.registrationStatus in ['pending', 'verified'])
+        && (data.get('displayName', '') is string && data.get('displayName', '').size() <= 100)
+        && (data.get('voterId', '') is string && data.get('voterId', '').size() <= 64)
+        && (data.get('bio', '') is string && data.get('bio', '').size() <= 500)
+        && (data.get('avatarUrl', '') is string && data.get('avatarUrl', '').size() <= 500)
+        && (data.get('role', 'voter') in ['voter', 'candidate', 'admin'])
+        && (data.get('createdAt', request.time) is timestamp || data.get('createdAt', '') is string)
+        && data.keys().hasAll(['uid', 'email', 'isVerified'])
+        && data.keys().size() <= 15;
+    }
+
+    function isValidVote(data) {
+      return data.electionId is string && isValidId(data.electionId)
+        && data.userId == request.auth.uid
+        && data.candidateId is string && isValidId(data.candidateId)
+        && (data.timestamp == request.time || data.timestamp is string) // Handle serverTimestamp or ISO string
+        && data.keys().hasAll(['electionId', 'userId', 'candidateId', 'timestamp'])
+        && data.keys().size() == 4;
+    }
+
+    // --- Rules ---
+
+    // Connection Test
+    match /test/connection {
+      allow get: if true;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn(); // Allow reading profiles for transparency (e.g. candidate profiles)
+      allow list: if isSignedIn(); // Required for uniqueness checks on voterId
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) && (
+        // Identity Integrity
+        incoming().uid == existing().uid &&
+        incoming().email == existing().email &&
+        // Action: Profile Update (allows any subset of these fields)
+        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'bio', 'avatarUrl', 'registrationStatus', 'isVerified', 'votedElections', 'role', 'voterId'])
+      );
+    }
+
+    match /elections/{electionId} {
+      allow list, get: if true;
+      // Only admins should write, but we allow creation for demo setup if logic permits
+      allow create: if isSignedIn(); 
+    }
+
+    match /elections/{electionId}/candidates/{candidateId} {
+      allow list, get: if true;
+      allow create, update: if isSignedIn(); // Allow seeding
+    }
+
+    match /votes/{voteId} {
+      // Identity & Relational Sync
+      allow create: if isSignedIn() 
+        && isValidVote(incoming())
+        && voteId == (incoming().electionId + "_" + request.auth.uid)
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isVerified == true
+        && get(/databases/$(database)/documents/elections/$(incoming().electionId)).data.status == 'active';
+      
+      allow get: if isSignedIn() && (existing().userId == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

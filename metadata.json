@@ -1,0 +1,8 @@
+{
+  "name": "VoteEase",
+  "description": "A modern, secure, and transparent digital voting platform with AI-powered candidate insights and secure identity verification.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
