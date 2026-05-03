@@ -204,8 +204,9 @@ const Assistant: React.FC = () => {
               className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-700 focus:border-blue-500 rounded-[1.5rem] py-5 pl-8 pr-20 text-slate-800 dark:text-slate-200 focus:ring-8 focus:ring-blue-100/50 dark:focus:ring-blue-900/20 outline-none transition-all shadow-inner text-lg font-medium"
             />
             <button 
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={isLoading || !input.trim()}
+              aria-label="Send Message"
               className="absolute right-3 top-1/2 -translate-y-1/2 w-14 h-14 rounded-2xl bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center hover:bg-blue-600 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-xl active:scale-90"
             >
               {isLoading ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} />}

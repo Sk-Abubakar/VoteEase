@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSettings } from '../contexts/SettingsContext';
+import { Candidate } from '../types';
+import { getElections, getCandidates } from '../services/electionService';
 import { 
   ChevronLeft, 
   Globe, 
@@ -78,7 +80,7 @@ const VISION_DATA: Record<string, VisionPoint[]> = {
   ]
 };
 
-const VisionMatrix: React.FC<{ candidateId: string }> = ({ candidateId }) => {
+const VisionMatrix: React.FC<{ candidateId: string }> = React.memo(({ candidateId }) => {
   const points = VISION_DATA[candidateId] || [];
   const [selectedPoint, setSelectedPoint] = useState<VisionPoint | null>(null);
   const { t } = useSettings();
@@ -145,11 +147,9 @@ const VisionMatrix: React.FC<{ candidateId: string }> = ({ candidateId }) => {
       </AnimatePresence>
     </div>
   );
-};
-import { Candidate } from '../types';
-import { getElections, getCandidates } from '../services/electionService';
+});
 
-const CandidateDetails: React.FC = () => {
+const CandidateDetails: React.FC = React.memo(() => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useSettings();
@@ -435,9 +435,9 @@ const CandidateDetails: React.FC = () => {
       </AnimatePresence>
     </div>
   );
-};
+});
 
-const ComparisonHead: React.FC<{ candidate: Candidate, isTarget?: boolean }> = ({ candidate, isTarget }) => (
+const ComparisonHead: React.FC<{ candidate: Candidate, isTarget?: boolean }> = React.memo(({ candidate, isTarget }) => (
   <div className={`space-y-4 ${isTarget ? 'text-right' : ''}`}>
     <img 
       src={candidate.avatarUrl} 
@@ -449,9 +449,9 @@ const ComparisonHead: React.FC<{ candidate: Candidate, isTarget?: boolean }> = (
       <p className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest">{candidate.party}</p>
     </div>
   </div>
-);
+));
 
-const ComparisonSection: React.FC<{ icon: React.ReactNode, label: string, value: string, isTarget?: boolean }> = ({ icon, label, value, isTarget }) => (
+const ComparisonSection: React.FC<{ icon: React.ReactNode, label: string, value: string, isTarget?: boolean }> = React.memo(({ icon, label, value, isTarget }) => (
   <div className={`space-y-3 ${isTarget ? 'text-right' : ''}`}>
     <div className={`flex items-center gap-2 text-slate-400 dark:text-slate-500 ${isTarget ? 'flex-row-reverse' : ''}`}>
       <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
@@ -460,9 +460,9 @@ const ComparisonSection: React.FC<{ icon: React.ReactNode, label: string, value:
       {value.length > 100 ? value.substring(0, 100) + '...' : value}
     </p>
   </div>
-);
+));
 
-const Section: React.FC<{ icon: React.ReactNode, title: string, content: string, isPlatform?: boolean }> = ({ icon, title, content, isPlatform }) => (
+const Section: React.FC<{ icon: React.ReactNode, title: string, content: string, isPlatform?: boolean }> = React.memo(({ icon, title, content, isPlatform }) => (
   <div className="bg-white dark:bg-slate-900 p-8 md:p-12 rounded-[3.5rem] border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
     <div className="flex items-center gap-4">
        <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-800">
@@ -485,9 +485,9 @@ const Section: React.FC<{ icon: React.ReactNode, title: string, content: string,
        )}
     </div>
   </div>
-);
+));
 
-const SourceItem: React.FC<{ label: string, percent: number }> = ({ label, percent }) => (
+const SourceItem: React.FC<{ label: string, percent: number }> = React.memo(({ label, percent }) => (
   <div className="space-y-2">
     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
       <span>{label}</span>
@@ -502,13 +502,13 @@ const SourceItem: React.FC<{ label: string, percent: number }> = ({ label, perce
       />
     </div>
   </div>
-);
+));
 
-const Endorsement: React.FC<{ icon: React.ReactNode, org: string }> = ({ icon, org }) => (
+const Endorsement: React.FC<{ icon: React.ReactNode, org: string }> = React.memo(({ icon, org }) => (
   <div className="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-default border border-transparent hover:border-slate-100 dark:hover:border-slate-800">
     <div className="text-slate-400 dark:text-slate-500">{icon}</div>
     <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{org}</span>
   </div>
-);
+));
 
 export default CandidateDetails;

@@ -11,12 +11,13 @@ import {
   Lock,
   ArrowRight,
   TrendingUp,
-  Award
+  Award,
+  Sparkles
 } from 'lucide-react';
 import { UserProfile, Election, Candidate } from '../types';
 import { getElections, getCandidates, submitVote } from '../services/electionService';
 
-const Ballot: React.FC<{ user: UserProfile }> = ({ user }) => {
+const Ballot: React.FC<{ user: UserProfile }> = React.memo(({ user }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [election, setElection] = useState<Election | null>(null);
@@ -216,16 +217,20 @@ const Ballot: React.FC<{ user: UserProfile }> = ({ user }) => {
               </button>
             </div>
 
-            <div className="p-6 bg-slate-900 rounded-[2.5rem] text-white space-y-4 shadow-xl">
-               <h4 className="font-bold flex items-center gap-2 text-sm uppercase tracking-widest">
-                 <Info size={16} className="text-blue-400" />
+            <div className="p-6 bg-slate-900 rounded-[2.5rem] text-white space-y-4 shadow-xl" role="complementary" aria-label="AI Voting Assistance">
+               <h4 className="font-bold flex items-center gap-2 text-sm uppercase tracking-widest text-blue-400">
+                 <Sparkles size={16} aria-hidden="true" />
                  AI Pro-Tip
                </h4>
                <p className="text-xs text-slate-400 leading-relaxed">
                  Having trouble deciding? Ask VoteEase AI to compare these candidates platforms against your top priorities in the Assistant tab.
                </p>
-               <Link to="/assistant" className="text-blue-400 text-xs font-bold hover:underline flex items-center gap-1 mt-2">
-                 Open Assistant <ArrowRight size={12} />
+               <Link 
+                 to="/assistant" 
+                 className="text-blue-400 text-xs font-bold hover:underline flex items-center gap-1 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20 rounded"
+                 aria-label="Open AI Assistant for candidate comparison"
+               >
+                 Open Assistant <ArrowRight size={12} aria-hidden="true" />
                </Link>
             </div>
           </div>
@@ -233,12 +238,16 @@ const Ballot: React.FC<{ user: UserProfile }> = ({ user }) => {
       </div>
     </div>
   );
-};
+});
 
-const CandidateCard: React.FC<{ candidate: Candidate, isSelected: boolean, onSelect: () => void }> = ({ candidate, isSelected, onSelect }) => (
+const CandidateCard: React.FC<{ candidate: Candidate, isSelected: boolean, onSelect: () => void }> = React.memo(({ candidate, isSelected, onSelect }) => (
   <motion.div 
     whileHover={{ y: -8 }}
     onClick={onSelect}
+    role="radio"
+    aria-checked={isSelected}
+    tabIndex={0}
+    onKeyDown={(e) => e.key === 'Enter' && onSelect()}
     className={`group cursor-pointer bg-white dark:bg-slate-900 p-8 rounded-[3rem] border-2 transition-all relative overflow-hidden ${
       isSelected 
         ? 'border-blue-600 dark:border-blue-500 shadow-2xl shadow-blue-100 dark:shadow-blue-900/20 scale-[1.02] bg-blue-50/10 dark:bg-blue-900/10' 
@@ -317,6 +326,6 @@ const CandidateCard: React.FC<{ candidate: Candidate, isSelected: boolean, onSel
       isSelected ? 'bg-blue-600/10' : 'bg-slate-100/0 group-hover:bg-blue-600/5'
     }`} />
   </motion.div>
-);
+));
 
 export default Ballot;

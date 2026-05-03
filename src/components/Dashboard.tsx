@@ -25,7 +25,7 @@ import { useSettings } from '../contexts/SettingsContext';
 
 import CandidateDashboard from './CandidateDashboard';
 
-const Dashboard: React.FC<{ user: UserProfile }> = ({ user }) => {
+const Dashboard: React.FC<{ user: UserProfile }> = React.memo(({ user }) => {
   const { t } = useSettings();
   const [elections, setElections] = useState<Election[]>([]);
   const [loading, setLoading] = useState(true);
@@ -371,7 +371,7 @@ const Dashboard: React.FC<{ user: UserProfile }> = ({ user }) => {
       </div>
     </div>
   );
-};
+});
 
 const ElectionCard: React.FC<{ election: Election, user: UserProfile }> = React.memo(({ election, user }) => {
   const hasVoted = user.votedElections.includes(election.id);
@@ -468,7 +468,7 @@ const ElectionCard: React.FC<{ election: Election, user: UserProfile }> = React.
   );
 });
 
-const HistoryItem: React.FC<{ electionId: string }> = ({ electionId }) => {
+const HistoryItem: React.FC<{ electionId: string }> = React.memo(({ electionId }) => {
   const [election, setElection] = useState<Election | null>(null);
 
   useEffect(() => {
@@ -500,9 +500,9 @@ const HistoryItem: React.FC<{ electionId: string }> = ({ electionId }) => {
       </button>
     </div>
   );
-};
+});
 
-const CheckItem: React.FC<{ label: string, completed: boolean }> = ({ label, completed }) => (
+const CheckItem: React.FC<{ label: string, completed: boolean }> = React.memo(({ label, completed }) => (
   <div className="flex items-center gap-3">
     <div className={`w-5 h-5 rounded-md flex items-center justify-center border transition-colors ${
       completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-transparent border-slate-200'
@@ -513,7 +513,7 @@ const CheckItem: React.FC<{ label: string, completed: boolean }> = ({ label, com
       {label}
     </span>
   </div>
-);
+));
 
 export default Dashboard;
 

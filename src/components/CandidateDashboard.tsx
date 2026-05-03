@@ -40,7 +40,7 @@ import {
 
 type ActiveTab = 'overview' | 'manifesto' | 'strategy';
 
-const CandidateDashboard: React.FC<{ user: UserProfile }> = ({ user }) => {
+const CandidateDashboard: React.FC<{ user: UserProfile }> = React.memo(({ user }) => {
   const [myCandidateProfiles, setMyCandidateProfiles] = useState<Candidate[]>([]);
   const [elections, setElections] = useState<Election[]>([]);
   const [loading, setLoading] = useState(true);
@@ -544,9 +544,9 @@ const CandidateDashboard: React.FC<{ user: UserProfile }> = ({ user }) => {
       </AnimatePresence>
     </div>
   );
-};
+});
 
-const StatCard: React.FC<{ icon: React.ReactNode, label: string, value: string, trend?: string, isPositive?: boolean, isNeutral?: boolean }> = ({ icon, label, value, trend, isPositive, isNeutral }) => (
+const StatCard: React.FC<{ icon: React.ReactNode, label: string, value: string, trend?: string, isPositive?: boolean, isNeutral?: boolean }> = React.memo(({ icon, label, value, trend, isPositive, isNeutral }) => (
   <div className="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm space-y-6 hover:shadow-xl hover:-translate-y-1 transition-all group">
     <div className="w-14 h-14 rounded-3xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
       {icon}
@@ -564,9 +564,9 @@ const StatCard: React.FC<{ icon: React.ReactNode, label: string, value: string, 
         </div>
     </div>
   </div>
-);
+));
 
-const MetricMiniCard: React.FC<{ label: string, value: string, icon: React.ReactNode }> = ({ label, value, icon }) => (
+const MetricMiniCard: React.FC<{ label: string, value: string, icon: React.ReactNode }> = React.memo(({ label, value, icon }) => (
   <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] border border-slate-100 dark:border-slate-800 flex items-center justify-between">
     <div className="space-y-1">
       <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</p>
@@ -574,9 +574,9 @@ const MetricMiniCard: React.FC<{ label: string, value: string, icon: React.React
     </div>
     <div className="text-blue-600 opacity-50">{icon}</div>
   </div>
-);
+));
 
-const OpportunityItem: React.FC<{ label: string, reward: string, color: string }> = ({ label, reward, color }) => (
+const OpportunityItem: React.FC<{ label: string, reward: string, color: string }> = React.memo(({ label, reward, color }) => (
   <div className="flex items-center justify-between group cursor-pointer">
     <div className="flex items-center gap-3">
       <div className={`w-2 h-2 rounded-full ${color === 'blue' ? 'bg-blue-600' : color === 'emerald' ? 'bg-emerald-600' : 'bg-amber-600'}`} />
@@ -584,9 +584,9 @@ const OpportunityItem: React.FC<{ label: string, reward: string, color: string }
     </div>
     <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{reward}</span>
   </div>
-);
+));
 
-const InsightCard: React.FC<{ type: 'success' | 'warning' | 'info', title: string, desc: string }> = ({ type, title, desc }) => (
+const InsightCard: React.FC<{ type: 'success' | 'warning' | 'info', title: string, desc: string }> = React.memo(({ type, title, desc }) => (
   <div className={`p-8 rounded-[2.5rem] border flex gap-6 ${
     type === 'success' ? 'bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/20' : 
     type === 'warning' ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-100 dark:border-amber-900/20' :
@@ -608,7 +608,7 @@ const InsightCard: React.FC<{ type: 'success' | 'warning' | 'info', title: strin
       <p className="text-sm font-medium text-slate-600 dark:text-slate-400 leading-relaxed">{desc}</p>
     </div>
   </div>
-);
+));
 
 const ShieldAlert: React.FC<{ size?: number }> = ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
