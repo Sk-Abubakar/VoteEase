@@ -1,10 +1,9 @@
-{
-  "projectId": "virtual-promptwar-493817",
-  "appId": "1:359522491577:web:4c7a886c1a674b5cca4f68",
-  "apiKey": "AIzaSyA__A0L-oOcm3Qh9a5SpyKtTjz0qsDToxg",
-  "authDomain": "virtual-promptwar-493817.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-6f4d159d-4957-4d9f-9282-a35dcf3cc7a5",
-  "storageBucket": "virtual-promptwar-493817.firebasestorage.app",
-  "messagingSenderId": "359522491577",
-  "measurementId": ""
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyXXXX",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "359522491577",
+  appId: "1:359522491577:web:abcd1234",
+  measurementId: "G-XXXXXXX"
+};
