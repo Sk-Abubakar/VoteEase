@@ -29,17 +29,30 @@ service cloud.firestore {
 
     // --- Validation Blueprints ---
 
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isJoinAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly(['registrationStatus', 'updatedAt']);
+    }
+
+    function isProfileUpdate() {
+      return incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'bio', 'avatarUrl', 'updatedAt']);
+    }
+
     function isValidUser(data) {
       return data.uid == request.auth.uid 
         && data.email is string && data.email.size() < 256
         && data.isVerified is bool
-        && (data.registrationStatus in ['pending', 'verified'])
+        && (data.registrationStatus in ['pending', 'verified', 'rejected'])
         && (data.get('displayName', '') is string && data.get('displayName', '').size() <= 100)
         && (data.get('voterId', '') is string && data.get('voterId', '').size() <= 64)
         && (data.get('bio', '') is string && data.get('bio', '').size() <= 500)
         && (data.get('avatarUrl', '') is string && data.get('avatarUrl', '').size() <= 500)
         && (data.get('role', 'voter') in ['voter', 'candidate', 'admin'])
-        && (data.get('createdAt', request.time) is timestamp || data.get('createdAt', '') is string)
+        && (data.get('createdAt', request.time) is timestamp)
+        && (data.get('updatedAt', request.time) is timestamp)
         && data.keys().hasAll(['uid', 'email', 'isVerified'])
         && data.keys().size() <= 15;
     }
@@ -61,15 +74,18 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow get: if isSignedIn(); // Allow reading profiles for transparency (e.g. candidate profiles)
-      allow list: if isSignedIn(); // Required for uniqueness checks on voterId
+      allow get: if isSignedIn(); 
+      allow list: if isSignedIn(); 
       allow create: if isOwner(userId) && isValidUser(incoming());
-      allow update: if isOwner(userId) && isValidUser(incoming()) && (
-        // Identity Integrity
+      allow update: if (isOwner(userId) || isAdmin()) && isValidUser(incoming()) && (
+        // Identity Immutability
         incoming().uid == existing().uid &&
         incoming().email == existing().email &&
-        // Action: Profile Update (allows any subset of these fields)
-        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'bio', 'avatarUrl', 'registrationStatus', 'isVerified', 'votedElections', 'role', 'voterId'])
+        incoming().voterId == existing().voterId &&
+        incoming().createdAt == existing().createdAt &&
+        
+        // Named Actions
+        (isProfileUpdate() || isJoinAction() || isAdmin())
       );
     }
 

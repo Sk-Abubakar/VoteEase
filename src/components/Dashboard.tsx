@@ -244,9 +244,11 @@ const Dashboard: React.FC<{ user: UserProfile }> = ({ user }) => {
                    </div>
                    <input 
                      type="text"
+                     id="election-search"
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
                      placeholder="Search elections..."
+                     aria-label="Search available elections"
                      className="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
                    />
                 </div>
@@ -371,7 +373,7 @@ const Dashboard: React.FC<{ user: UserProfile }> = ({ user }) => {
   );
 };
 
-const ElectionCard: React.FC<{ election: Election, user: UserProfile }> = ({ election, user }) => {
+const ElectionCard: React.FC<{ election: Election, user: UserProfile }> = React.memo(({ election, user }) => {
   const hasVoted = user.votedElections.includes(election.id);
   const [timeLeft, setTimeLeft] = useState("");
 
@@ -464,7 +466,7 @@ const ElectionCard: React.FC<{ election: Election, user: UserProfile }> = ({ ele
       <Vote className="absolute -bottom-6 -right-6 text-slate-50 dark:text-white/5 opacity-[0.03] size-48 pointer-events-none" />
     </div>
   );
-};
+});
 
 const HistoryItem: React.FC<{ electionId: string }> = ({ electionId }) => {
   const [election, setElection] = useState<Election | null>(null);
@@ -521,7 +523,7 @@ const TimelinePoint: React.FC<{
   date: string, 
   status: 'completed' | 'current' | 'upcoming',
   isActive: boolean
-}> = ({ icon, label, date, status, isActive }) => (
+}> = React.memo(({ icon, label, date, status, isActive }) => (
   <div className="flex flex-col items-center gap-6 relative z-10 w-48">
     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${
       status === 'completed' ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/20' :
@@ -542,4 +544,4 @@ const TimelinePoint: React.FC<{
       </div>
     )}
   </div>
-);
+));

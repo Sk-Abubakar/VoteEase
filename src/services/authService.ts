@@ -60,7 +60,8 @@ async function syncUserProfile(user: FirebaseUser | { uid: string, displayName?:
       
       await setDoc(userDocRef, {
         ...newUser,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       });
       return newUser;
     }
@@ -68,7 +69,10 @@ async function syncUserProfile(user: FirebaseUser | { uid: string, displayName?:
     const existing = userDoc.data() as UserProfile;
     // If extraData provided (like a voterId), update it if missing
     if (Object.keys(extraData).length > 0) {
-      await setDoc(userDocRef, { ...extraData }, { merge: true });
+      await setDoc(userDocRef, { 
+        ...extraData,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
       return { ...existing, ...extraData };
     }
 
@@ -249,7 +253,10 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 export async function updateUserProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
   const userDocRef = doc(db, 'users', uid);
   try {
-    await setDoc(userDocRef, { ...data }, { merge: true });
+    await setDoc(userDocRef, { 
+      ...data,
+      updatedAt: serverTimestamp() 
+    }, { merge: true });
   } catch (error: any) {
     if (error.message && error.message.includes('operationType')) {
       throw error;

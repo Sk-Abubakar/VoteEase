@@ -35,13 +35,13 @@ const LandingPage: React.FC<{ onOpenLogin: () => void, onOpenProtocol: () => voi
       className="space-y-24"
     >
       {/* Hero Section */}
-      <section className="relative py-12 overflow-hidden text-center">
+      <section className="relative py-12 overflow-hidden text-center" aria-labelledby="hero-heading">
         <div className="space-y-8 max-w-4xl mx-auto">
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest">
-            <Globe size={14} /> Global Protocol v4.0
+            <Globe size={14} aria-hidden="true" /> Global Protocol v4.0
           </motion.div>
           
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-8xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+          <motion.h1 id="hero-heading" variants={itemVariants} className="text-5xl md:text-8xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
             {t('hero_title')}
           </motion.h1>
           
@@ -53,13 +53,15 @@ const LandingPage: React.FC<{ onOpenLogin: () => void, onOpenProtocol: () => voi
             <button 
               onClick={handleStart}
               className="group w-full sm:w-auto px-8 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-full font-bold text-lg hover:bg-slate-800 dark:hover:bg-blue-500 transition-all flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl hover:scale-[1.02]"
+              aria-label={`${t('begin_journey')} - Secure Voter Registration`}
             >
               {t('begin_journey')}
-              <ArrowRight className="group-hover:translate-x-1 transition-transform rtl:rotate-180" />
+              <ArrowRight className="group-hover:translate-x-1 transition-transform rtl:rotate-180" aria-hidden="true" />
             </button>
             <button 
               onClick={handleViewProtocol}
               className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-full font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
+              aria-label="Read Security Protocol Manifesto"
             >
               {t('view_protocol')}
             </button>

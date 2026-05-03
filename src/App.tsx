@@ -98,9 +98,12 @@ const App: React.FC = () => {
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-100/50 dark:bg-purple-900/20 blur-[120px]" />
         </div>
 
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[100] bg-blue-600 text-white px-4 py-2 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-2xl">
+          Skip to main content
+        </a>
         <Navbar user={user} onOpenLogin={() => setShowLoginModal(true)} onLogout={handleLogout} />
 
-        <main className="relative z-10 pt-16 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <main id="main-content" className="relative z-10 pt-16 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto focus:outline-none">
           <AnimatePresence mode="wait">
             <Routes>
               <Route path="/" element={<LandingPage onOpenLogin={() => setShowLoginModal(true)} onOpenProtocol={() => setShowProtocolModal(true)} />} />
@@ -158,7 +161,7 @@ const App: React.FC = () => {
   );
 };
 
-const AssistantShortcut: React.FC = () => {
+const AssistantShortcut: React.FC = React.memo(() => {
   const location = useLocation();
   if (location.pathname === '/assistant') return null;
 
@@ -171,6 +174,7 @@ const AssistantShortcut: React.FC = () => {
       <Link 
         to="/assistant"
         className="group relative flex items-center justify-center"
+        aria-label="Open AI Protocol Assistant"
       >
         <div className="absolute inset-0 bg-blue-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-500" />
         <div className="relative w-14 h-14 bg-slate-900 text-white rounded-2xl shadow-2xl flex items-center justify-center border border-white/10 group-hover:bg-blue-600 group-hover:-translate-y-1 transition-all duration-500 group-hover:-rotate-6">
@@ -186,7 +190,7 @@ const AssistantShortcut: React.FC = () => {
       </Link>
     </motion.div>
   );
-};
+});
 
 const ProtocolModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   return (
